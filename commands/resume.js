@@ -2,90 +2,90 @@ const { MessageEmbed } = require("discord.js");
 const { TrackUtils } = require("erela.js");
 
 module.exports = {
-  name: "resume",
-  description: "Resumes the music",
-  usage: "",
-  permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
-    member: [],
+  nombre: "continuar",
+  descripción: "Reanuda la música",
+  uso: "",
+  permisos: {
+    canal: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
+    miembro: [],
   },
-  aliases: [],
+  alias: [],
   /**
    *
-   * @param {import("../structures/DiscordMusicBot")} client
-   * @param {import("discord.js").Message} message
+   * @param {import("../structures/DiscordMusicBot")} cliente
+   * @param {import("discord.js").Message} mensaje
    * @param {string[]} args
    * @param {*} param3
    */
-  run: async (client, message, args, { GuildDB }) => {
-    let player = await client.Manager.get(message.guild.id);
-    if (!player)
-      return client.sendTime(
-        message.channel,
-        "❌ | **Nothing is playing right now...**"
+  ejecutar: async (cliente, mensaje, args, { GuildDB }) => {
+    let reproductor = await cliente.Manager.get(mensaje.guild.id);
+    if (!reproductor)
+      return cliente.sendTime(
+        mensaje.channel,
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
-    if (!message.member.voice.channel)
-      return client.sendTime(
-        message.channel,
-        "❌ | **You must be in a voice channel to use this command!**"
+    if (!mensaje.member.voice.channel)
+      return cliente.sendTime(
+        mensaje.channel,
+        "❌ | **¡Debes estar en un canal de voz para usar este comando!**"
       );
     if (
-      message.guild.me.voice.channel &&
-      message.member.voice.channel.id !== message.guild.me.voice.channel.id
+      mensaje.guild.me.voice.channel &&
+      mensaje.member.voice.channel.id !== mensaje.guild.me.voice.channel.id
     )
-      return client.sendTime(
-        message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+      return cliente.sendTime(
+        mensaje.channel,
+        "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
       );
 
-    if (player.playing)
-      return client.sendTime(
-        message.channel,
-        "❌ | **Music is already resumed!**"
+    if (reproductor.playing)
+      return cliente.sendTime(
+        mensaje.channel,
+        "❌ | **¡La música ya se está reproduciendo!**"
       );
-    player.pause(false);
-    await message.react("✅");
+    reproductor.pause(false);
+    await mensaje.react("✅");
   },
 
-  SlashCommand: {
+  ComandoDeBarra: {
     /**
      *
-     * @param {import("../structures/DiscordMusicBot")} client
-     * @param {import("discord.js").Message} message
+     * @param {import("../structures/DiscordMusicBot")} cliente
+     * @param {import("discord.js").Message} mensaje
      * @param {string[]} args
      * @param {*} param3
      */
-    run: async (client, interaction, args, { GuildDB }) => {
-      const guild = client.guilds.cache.get(interaction.guild_id);
-      const member = guild.members.cache.get(interaction.member.user.id);
+    ejecutar: async (cliente, interacción, args, { GuildDB }) => {
+      const guild = cliente.guilds.cache.get(interacción.guild_id);
+      const miembro = guild.members.cache.get(interacción.member.user.id);
 
-      if (!member.voice.channel)
-        return client.sendTime(
-          interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+      if (!miembro.voice.channel)
+        return cliente.sendTime(
+          interacción,
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
-        !guild.me.voice.channel.equals(member.voice.channel)
+        !guild.me.voice.channel.equals(miembro.voice.channel)
       )
-        return client.sendTime(
-          interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+        return cliente.sendTime(
+          interacción,
+          "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
         );
 
-      let player = await client.Manager.get(interaction.guild_id);
-      if (!player)
-        return client.sendTime(
-          interaction,
-          "❌ | **Nothing is playing right now...**"
+      let reproductor = await cliente.Manager.get(interacción.guild_id);
+      if (!reproductor)
+        return cliente.sendTime(
+          interacción,
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
-      if (player.playing)
-        return client.sendTime(
-          interaction,
-          "❌ | **Music is already resumed!**"
+      if (reproductor.playing)
+        return cliente.sendTime(
+          interacción,
+          "❌ | **¡La música ya se está reproduciendo!**"
         );
-      player.pause(false);
-      client.sendTime(interaction, "**⏯ Resumed!**");
+      reproductor.pause(false);
+      cliente.sendTime(interacción, "**⏯ ¡Reanudado!**");
     },
   },
 };
