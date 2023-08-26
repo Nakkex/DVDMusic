@@ -5,8 +5,8 @@ const prettyMilliseconds = require("pretty-ms");
 
 module.exports = {
   name: "search",
-  description: "Shows a result of songs based on the search query",
-  usage: "[song]",
+  description: "Muestra resultados de canciones basados en la búsqueda",
+  usage: "[canción]",
   permissions: {
     channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
     member: [],
@@ -23,7 +23,7 @@ module.exports = {
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to play something!**"
+        "❌ | **¡Debes estar en un canal de voz para reproducir algo!**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -31,20 +31,20 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
       );
 
-    let SearchString = args.join(" ");
-    if (!SearchString)
+    let CadenaBusqueda = args.join(" ");
+    if (!CadenaBusqueda)
       return client.sendTime(
         message.channel,
-        `**Usage - **\`${GuildDB.prefix}search [query]\``
+        `**Uso - **\`${GuildDB.prefix}search [consulta]\``
       );
-    let CheckNode = client.Manager.nodes.get(client.botconfig.Lavalink.id);
-    if (!CheckNode || !CheckNode.connected) {
+    let NodoVerificado = client.Manager.nodes.get(client.botconfig.Lavalink.id);
+    if (!NodoVerificado || !NodoVerificado.connected) {
       return client.sendTime(
         message.channel,
-        "❌ | **Lavalink node not connected**"
+        "❌ | **Nodo Lavalink no conectado**"
       );
     }
     const player = client.Manager.create({
@@ -57,50 +57,50 @@ module.exports = {
 
     if (player.state != "CONNECTED") await player.connect();
 
-    let Searched = await player.search(SearchString, message.author);
-    if (Searched.loadType == "NO_MATCHES")
+    let Buscado = await player.search(CadenaBusqueda, message.author);
+    if (Buscado.loadType == "NO_MATCHES")
       return client.sendTime(
         message.channel,
-        "No matches found for " + SearchString
+        "No se encontraron coincidencias para " + CadenaBusqueda
       );
     else {
-      Searched.tracks = Searched.tracks.map((s, i) => {
+      Buscado.tracks = Buscado.tracks.map((s, i) => {
         s.index = i;
         return s;
       });
-      let songs = _.chunk(Searched.tracks, 10);
-      let Pages = songs.map((songz) => {
-        let MappedSongs = songz.map(
-          (s) =>
-            `\`${s.index + 1}.\` [${s.title}](${
-              s.uri
-            }) \nDuration: \`${prettyMilliseconds(s.duration, {
+      let canciones = _.chunk(Buscado.tracks, 10);
+      let Páginas = canciones.map((cancionesChunk) => {
+        let CancionesMapeadas = cancionesChunk.map(
+          (c) =>
+            `\`${c.index + 1}.\` [${c.title}](${
+              c.uri
+            }) \nDuración: \`${prettyMilliseconds(c.duration, {
               colonNotation: true,
             })}\``
         );
 
         let em = new MessageEmbed()
           .setAuthor(
-            "Search Results of " + SearchString,
+            "Resultados de búsqueda de " + CadenaBusqueda,
             client.botconfig.IconURL
           )
           .setColor(client.botconfig.EmbedColor)
-          .setDescription(MappedSongs.join("\n\n"));
+          .setDescription(CancionesMapeadas.join("\n\n"));
         return em;
       });
 
-      if (!Pages.length || Pages.length === 1)
-        return message.channel.send(Pages[0]);
-      else client.Pagination(message, Pages);
+      if (!Páginas.length || Páginas.length === 1)
+        return message.channel.send(Páginas[0]);
+      else client.Pagination(message, Páginas);
 
       let w = (a) => new Promise((r) => setInterval(r, a));
-      await w(500); //waits 500ms cuz needed to wait for the above song search embed to send ._.
+      await w(500); // Espera 500ms porque es necesario esperar a que se envíe el embed de búsqueda de canciones anterior.
       let msg = await message.channel.send(
-        "**Type the number of the song you want to play! Expires in `30 seconds`.**"
+        "**Escribe el número de la canción que deseas reproducir. Expira en `30 segundos`.**"
       );
 
       let er = false;
-      let SongID = await message.channel
+      let IDCancion = await message.channel
         .awaitMessages((msg) => message.author.id === msg.author.id, {
           max: 1,
           errors: ["time"],
@@ -109,58 +109,58 @@ module.exports = {
         .catch(() => {
           er = true;
           msg.edit(
-            "**You took too long to respond. Run the command again if you want to play something!**"
+            "**Te tomaste demasiado tiempo para responder. Ejecuta el comando nuevamente si deseas reproducir algo.**"
           );
         });
       if (er) return;
       /**@type {Message} */
-      let SongIDmsg = SongID.first();
+      let MensajeIDCancion = IDCancion.first();
 
-      if (!parseInt(SongIDmsg.content))
+      if (!parseInt(MensajeIDCancion.content))
         return client.sendTime(
           message.channel,
-          "Please send correct song ID number"
+          "Por favor, envía el número correcto de identificación de canción"
         );
-      let Song = Searched.tracks[parseInt(SongIDmsg.content) - 1];
-      if (!Song)
+      let Cancion = Buscado.tracks[parseInt(MensajeIDCancion.content) - 1];
+      if (!Cancion)
         return client.sendTime(
           message.channel,
-          "No song found for the given ID"
+          "No se encontró ninguna canción para el ID proporcionado"
         );
-      player.queue.add(Song);
+      player.queue.add(Cancion);
       if (!player.playing && !player.paused && !player.queue.size)
         player.play();
-      let SongAddedEmbed = new MessageEmbed();
-      SongAddedEmbed.setAuthor(`Added to queue`, client.botconfig.IconURL);
-      SongAddedEmbed.setThumbnail(Song.displayThumbnail());
-      SongAddedEmbed.setColor(client.botconfig.EmbedColor);
-      SongAddedEmbed.setDescription(`[${Song.title}](${Song.uri})`);
-      SongAddedEmbed.addField("Author", `${Song.author}`, true);
-      SongAddedEmbed.addField(
-        "Duration",
+      let EmbedCancionAñadida = new MessageEmbed();
+      EmbedCancionAñadida.setAuthor(`Añadido a la cola`, client.botconfig.IconURL);
+      EmbedCancionAñadida.setThumbnail(Cancion.displayThumbnail());
+      EmbedCancionAñadida.setColor(client.botconfig.EmbedColor);
+      EmbedCancionAñadida.setDescription(`[${Cancion.title}](${Cancion.uri})`);
+      EmbedCancionAñadida.addField("Autor", `${Cancion.author}`, true);
+      EmbedCancionAñadida.addField(
+        "Duración",
         `\`${prettyMilliseconds(player.queue.current.duration, {
           colonNotation: true,
         })}\``,
         true
       );
       if (player.queue.totalSize > 1)
-        SongAddedEmbed.addField(
-          "Position in queue",
+        EmbedCancionAñadida.addField(
+          "Posición en la cola",
           `${player.queue.size - 0}`,
           true
         );
-      message.channel.send(SongAddedEmbed);
+      message.channel.send(EmbedCancionAñadida);
     }
   },
 
   SlashCommand: {
     options: [
       {
-        name: "song",
-        value: "song",
+        name: "cancion",
+        value: "cancion",
         type: 3,
         required: true,
-        description: "Enter the song name or url you want to search",
+        description: "Ingresa el nombre de la canción o la URL que deseas buscar",
       },
     ],
     /**
@@ -174,11 +174,12 @@ module.exports = {
       const guild = client.guilds.cache.get(interaction.guild_id);
       const member = guild.members.cache.get(interaction.member.user.id);
       const voiceChannel = member.voice.channel;
-      let awaitchannel = client.channels.cache.get(interaction.channel_id); /// thanks Reyansh for this idea ;-;
+      let canalEspera = client.channels.cache.get(interaction.channel_id);
+/// gracias Reyansh por esta idea ;-;
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -186,13 +187,13 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+          "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
         );
-      let CheckNode = client.Manager.nodes.get(client.botconfig.Lavalink.id);
-      if (!CheckNode || !CheckNode.connected) {
+      let NodoVerificado = client.Manager.nodes.get(client.botconfig.Lavalink.id);
+      if (!NodoVerificado || !NodoVerificado.connected) {
         return client.sendTime(
           interaction,
-          "❌ | **Lavalink node not connected**"
+          "❌ | **Nodo Lavalink no conectado**"
         );
       }
       let player = client.Manager.create({
@@ -203,57 +204,57 @@ module.exports = {
         volume: client.botconfig.DefaultVolume,
       });
       if (player.state != "CONNECTED") await player.connect();
-      let search = interaction.data.options[0].value;
+      let búsqueda = interaction.data.options[0].value;
       let res;
 
-      if (search.match(client.Lavasfy.spotifyPattern)) {
+      if (búsqueda.match(client.Lavasfy.spotifyPattern)) {
         await client.Lavasfy.requestToken();
         let node = client.Lavasfy.nodes.get(client.botconfig.Lavalink.id);
-        let Searched = await node.load(search);
+        let Buscado = await node.load(búsqueda);
 
-        switch (Searched.loadType) {
+        switch (Buscado.loadType) {
           case "LOAD_FAILED":
             if (!player.queue.current) player.destroy();
             return client.sendError(
               interaction,
-              `❌ | **There was an error while searching**`
+              `❌ | **Ocurrió un error durante la búsqueda**`
             );
 
           case "NO_MATCHES":
             if (!player.queue.current) player.destroy();
             return client.sendTime(
               interaction,
-              "❌ | **No results were found**"
+              "❌ | **No se encontraron resultados**"
             );
           case "TRACK_LOADED":
-            player.queue.add(TrackUtils.build(Searched.tracks[0], member.user));
+            player.queue.add(TrackUtils.build(Buscado.tracks[0], member.user));
             if (!player.playing && !player.paused && !player.queue.length)
               player.play();
             return client.sendTime(
               interaction,
-              `**Added to queue:** \`[${Searched.tracks[0].info.title}](${Searched.tracks[0].info.uri}}\`.`
+              `**Añadido a la cola:** \`[${Buscado.tracks[0].info.title}](${Buscado.tracks[0].info.uri}}\`.`
             );
 
           case "PLAYLIST_LOADED":
-            let songs = [];
-            for (let i = 0; i < Searched.tracks.length; i++)
-              songs.push(TrackUtils.build(Searched.tracks[i], member.user));
-            player.queue.add(songs);
+            let canciones = [];
+            for (let i = 0; i < Buscado.tracks.length; i++)
+              canciones.push(TrackUtils.build(Buscado.tracks[i], member.user));
+            player.queue.add(canciones);
 
             if (
               !player.playing &&
               !player.paused &&
-              player.queue.totalSize === Searched.tracks.length
+              player.queue.totalSize === Buscado.tracks.length
             )
               player.play();
             return client.sendTime(
               interaction,
-              `**Playlist added to queue**: \n**${Searched.playlist.name}** \nEnqueued: **${Searched.playlistInfo.length} songs**`
+              `**Lista de reproducción añadida a la cola**: \n**${Buscado.playlist.name}** \nEn cola: **${Buscado.playlistInfo.length} canciones**`
             );
         }
       } else {
         try {
-          res = await player.search(search, member.user);
+          res = await player.search(búsqueda, member.user);
           if (res.loadType === "LOAD_FAILED") {
             if (!player.queue.current) player.destroy();
             throw new Error(res.exception.message);
@@ -261,7 +262,7 @@ module.exports = {
         } catch (err) {
           return client.sendTime(
             interaction,
-            `❌ | **There was an error while searching:** ${err.message}`
+            `❌ | **Ocurrió un error durante la búsqueda:** ${err.message}`
           );
         }
         switch (res.loadType) {
@@ -269,7 +270,7 @@ module.exports = {
             if (!player.queue.current) player.destroy();
             return client.sendTime(
               interaction,
-              "❌ | **No results were found**"
+              "❌ | **No se encontraron resultados**"
             );
           case "TRACK_LOADED":
             player.queue.add(res.tracks[0]);
@@ -277,7 +278,7 @@ module.exports = {
               player.play();
             return client.sendTime(
               interaction,
-              `**Added to queue:** \`[${res.tracks[0].title}](${res.tracks[0].uri})\`.`
+              `**Añadido a la cola:** \`[${res.tracks[0].title}](${res.tracks[0].uri})\`.`
             );
           case "PLAYLIST_LOADED":
             player.queue.add(res.tracks);
@@ -290,7 +291,7 @@ module.exports = {
               player.play();
             return client.sendTime(
               interaction,
-              `**Playlist added to queue**: \n**${res.playlist.name}** \nEnqueued: **${res.playlistInfo.length} songs**`
+              `**Lista de reproducción añadida a la cola**: \n**${res.playlist.name}** \nEn cola: **${res.playlistInfo.length} canciones**`
             );
           case "SEARCH_RESULT":
             let max = 10,
@@ -300,82 +301,83 @@ module.exports = {
                 /^(\d+|end)$/i.test(m.content);
             if (res.tracks.length < max) max = res.tracks.length;
 
-            const results = res.tracks
+            const resultados = res.tracks
               .slice(0, max)
               .map(
-                (track, index) =>
-                  `\`${++index}\` - [${track.title}](${
-                    track.uri
-                  }) \n\t\`${prettyMilliseconds(track.duration, {
+                (canción, index) =>
+                  `\`${++index}\` - [${canción.title}](${
+                    canción.uri
+                  }) \n\t\`${prettyMilliseconds(canción.duration, {
                     colonNotation: true,
                   })}\`\n`
               )
               .join("\n");
 
-            const resultss = new MessageEmbed()
+            const resultadosEmbed = new MessageEmbed()
               .setDescription(
-                `${results}\n\n\t**Type the number of the song you want to play!**\n`
+                `${resultados}\n\n\t**Escribe el número de la canción que deseas reproducir.**\n`
               )
               .setColor(client.botconfig.EmbedColor)
               .setAuthor(
-                `Search results for ${search}`,
+                `Resultados de búsqueda para ${búsqueda}`,
                 client.botconfig.IconURL
               );
-            interaction.send(resultss);
+            interaction.send(resultadosEmbed);
             try {
-              collected = await awaitchannel.awaitMessages(filter, {
+              collected = await canalEspera.awaitMessages(filter, {
                 max: 1,
                 time: 30e3,
                 errors: ["time"],
               });
             } catch (e) {
               if (!player.queue.current) player.destroy();
-              return awaitchannel.send(
-                "❌ | **You didn't provide a selection**"
+              return canalEspera.send(
+                "❌ | **No proporcionaste una selección**"
               );
             }
 
-            const first = collected.first().content;
+            const primero = collected.first().content;
 
-            if (first.toLowerCase() === "cancel") {
+            if (primero.toLowerCase() === "cancelar") {
               if (!player.queue.current) player.destroy();
-              return awaitchannel.send("Cancelled search.");
+              return canalEspera.send("Búsqueda cancelada.");
             }
 
-            const index = Number(first) - 1;
-            if (index < 0 || index > max - 1)
-              return awaitchannel.send(
-                `The number you provided was greater or less than the search total. Usage - \`(1-${max})\``
+            const índice = Number(primero) - 1;
+            if (índice < 0 || índice > max - 1)
+              return canalEspera.send(
+                `El número que proporcionaste fue mayor o menor que el total de la búsqueda. Uso - \`(1-${max})\``
               );
-            const track = res.tracks[index];
-            player.queue.add(track);
+            const pista = res.tracks[índice];
+            player.queue.add(pista);
 
             if (!player.playing && !player.paused && !player.queue.length) {
               player.play();
             } else {
-              let SongAddedEmbed = new MessageEmbed();
-              SongAddedEmbed.setAuthor(
-                `Added to queue`,
+              let embedCanciónAñadida = new MessageEmbed();
+              embedCanciónAñadida.setAuthor(
+                `Añadido a la cola`,
                 client.botconfig.IconURL
               );
-              SongAddedEmbed.setThumbnail(track.displayThumbnail());
-              SongAddedEmbed.setColor(client.botconfig.EmbedColor);
-              SongAddedEmbed.setDescription(`[${track.title}](${track.uri})`);
-              SongAddedEmbed.addField("Author", track.author, true);
-              SongAddedEmbed.addField(
-                "Duration",
-                `\`${prettyMilliseconds(track.duration, {
+              embedCanciónAñadida.setThumbnail(pista.displayThumbnail());
+              embedCanciónAñadida.setColor(client.botconfig.EmbedColor);
+              embedCanciónAñadida.setDescription(`[${pista.title}]
+(${pista.uri})`);
+              embedCanciónAñadida.addField("Autor", pista.author, true);
+              embedCanciónAñadida.addField(
+                "Duración",
+                `\`${prettyMilliseconds(pista.duration, {
                   colonNotation: true,
                 })}\``,
                 true
               );
               if (player.queue.totalSize > 1)
-                SongAddedEmbed.addField(
-                  "Position in queue",
+                embedCanciónAñadida.addField(
+                  "Posición en la cola",
                   `${player.queue.size - 0}`,
                   true
                 );
-              awaitchannel.send(SongAddedEmbed);
+              canalEspera.send(embedCanciónAñadida);
             }
         }
       }
