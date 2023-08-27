@@ -1,11 +1,11 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-  name: "shuffle",
-  description: "Shuffles the queue",
+  name: "barajar",
+  description: "Baraja la cola de reproducción",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["shuff"],
@@ -21,12 +21,12 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **No se está reproduciendo nada en este momento...**"
       );
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to use this command!**"
+        "❌ | **Debes estar en un canal de voz para usar este comando.**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -34,15 +34,15 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
       );
     if (!player.queue || !player.queue.length || player.queue.length === 0)
       return client.sendTime(
         message.channel,
-        "❌ | **Not enough songs in the queue to shuffle!**"
+        "❌ | **¡No hay suficientes canciones en la cola para barajar!**"
       );
     player.queue.shuffle();
-    await client.sendTime(message.channel, "✅ | Shuffled the queue!");
+    await client.sendTime(message.channel, "✅ | ¡Cola barajada!");
   },
   SlashCommand: {
     /**
@@ -59,7 +59,7 @@ module.exports = {
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -67,22 +67,22 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+          "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
         );
 
       let player = await client.Manager.get(interaction.guild_id);
       if (!player)
         return client.sendTime(
           interaction.channel,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **No se está reproduciendo nada en este momento...**"
         );
       if (!player.queue || !player.queue.length || player.queue.length === 0)
         return client.sendTime(
           interaction,
-          "❌ | **Not enough songs in the queue to shuffle!**"
+          "❌ | **¡No hay suficientes canciones en la cola para barajar!**"
         );
       player.queue.shuffle();
-      client.sendTime(interaction, "✅ | Shuffled the queue!");
+      client.sendTime(interaction, "✅ | ¡Cola barajada!");
     },
   },
 };
