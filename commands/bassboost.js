@@ -8,13 +8,13 @@ const levels = {
 };
 module.exports = {
   name: "bassboost",
-  description: "Enables bass boosting audio effect",
-  usage: "<none|low|medium|high>",
+  description: "Activa el efecto de aumento de graves",
+  usage: "<ninguno|bajo|medio|alto>",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
-  aliases: ["bb", "bass"],
+  aliases: ["bb", "grave"],
   /**
    *
    * @param {import("../structures/DiscordMusicBot")} client
@@ -27,12 +27,12 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to use this command!**"
+        "❌ | **¡Debes estar en un canal de voz para usar este comando!**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -40,36 +40,36 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
       );
 
     if (!args[0])
       return client.sendTime(
         message.channel,
-        "**Please provide a bassboost level. \nAvailable Levels:** `none`, `low`, `medium`, `high`"
+        "**Por favor proporciona un nivel de aumento de graves. \nNiveles disponibles:** `ninguno`, `bajo`, `medio`, `alto`"
       );
 
-    let level = "none";
+    let level = "ninguno";
     if (args.length && args[0].toLowerCase() in levels)
       level = args[0].toLowerCase();
 
     player.setEQ(
       ...new Array(3)
         .fill(null)
-        .map((_, i) => ({ band: i, gain: levels[level] }))
+        .map((_, i) => ({ banda: i, ganancia: levels[level] }))
     );
 
     return client.sendTime(
       message.channel,
-      `✅ | **Bassboost level set to** \`${level}\``
+      `✅ | **Nivel de aumento de graves establecido en** \`${level}\``
     );
   },
   SlashCommand: {
     options: [
       {
-        name: "level",
-        description: `Please provide a bassboost level. Available Levels: low, medium, high, or none`,
-        value: "[level]",
+        name: "nivel",
+        description: `Por favor proporciona un nivel de aumento de graves. Niveles disponibles: bajo, medio, alto o ninguno`,
+        value: "[nivel]",
         type: 3,
         required: true,
       },
@@ -84,10 +84,10 @@ module.exports = {
 
     run: async (client, interaction, args, { GuildDB }) => {
       const levels = {
-        none: 0.0,
-        low: 0.2,
-        medium: 0.3,
-        high: 0.35,
+        ninguno: 0.0,
+        bajo: 0.2,
+        medio: 0.3,
+        alto: 0.35,
       };
 
       let player = await client.Manager.get(interaction.guild_id);
@@ -97,12 +97,12 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -110,26 +110,26 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+          "❌ | **¡Debes estar en el mismo canal de voz que yo para usar este comando!**"
         );
       if (!args)
         return client.sendTime(
           interaction,
-          "**Please provide a bassboost level. \nAvailable Levels:** `none`, `low`, `medium`, `high`"
+          "**Por favor proporciona un nivel de aumento de graves. \nNiveles disponibles:** `ninguno`, `bajo`, `medio`, `alto`"
         );
 
-      let level = "none";
+      let level = "ninguno";
       if (args.length && args[0].value in levels) level = args[0].value;
 
       player.setEQ(
         ...new Array(3)
           .fill(null)
-          .map((_, i) => ({ band: i, gain: levels[level] }))
+          .map((_, i) => ({ banda: i, ganancia: levels[level] }))
       );
 
       return client.sendTime(
         interaction,
-        `✅ | **Set the bassboost level to** \`${level}\``
+        `✅ | **Nivel de aumento de graves establecido en** \`${level}\``
       );
     },
   },
