@@ -4,10 +4,10 @@ let d;
 
 module.exports = {
   name: "grab",
-  description: "Saves the current song to your Direct Messages",
+  description: "Guarda la canción actual en tus Mensajes Directos",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["save"],
@@ -23,17 +23,17 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
     if (!player.playing)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to play something!**"
+        "❌ | **Debes estar en un canal de voz para reproducir algo.**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -41,11 +41,11 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
       );
     let GrabEmbed = new MessageEmbed()
       .setAuthor(
-        `Song saved`,
+        `Canción guardada`,
         client.user.displayAvatarURL({
           dynamic: true,
         })
@@ -57,35 +57,35 @@ module.exports = {
       .setColor(client.botconfig.EmbedColor)
       .setTitle(`**${player.queue.current.title}**`);
 
-    // Check if duration matches duration of livestream
+    // Comprueba si la duración coincide con la duración de una transmisión en vivo
 
     if (player.queue.current.duration == 9223372036854776000) {
-      d = "Live";
+      d = "En vivo";
     } else {
       d = prettyMilliseconds(player.queue.current.duration, {
         colonNotation: true,
       });
     }
-    GrabEmbed.addField(`⌛ Duration: `, `\`${d}\``, true)
-      .addField(`🎵 Author: `, `\`${player.queue.current.author}\``, true)
+    GrabEmbed.addField(`⌛ Duración: `, `\`${d}\``, true)
+      .addField(`🎵 Autor: `, `\`${player.queue.current.author}\``, true)
       .addField(
-        `▶ Play it:`,
+        `▶ Reproducir:`,
         `\`${GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix}play ${
           player.queue.current.uri
         }\``
       )
-      .addField(`🔎 Saved in:`, `<#${message.channel.id}>`)
+      .addField(`🔎 Guardado en:`, `<#${message.channel.id}>`)
       .setFooter(
-        `Requested by: ${player.queue.current.requester.tag}`,
+        `Solicitado por: ${player.queue.current.requester.tag}`,
         player.queue.current.requester.displayAvatarURL({
           dynamic: true,
         })
       );
     message.author.send(GrabEmbed).catch((e) => {
-      return message.channel.send("**❌ Your DMs are disabled**");
+      return message.channel.send("**❌ Tus mensajes directos están desactivados**");
     });
 
-    client.sendTime(message.channel, "✅ | **Check your DMs!**");
+    client.sendTime(message.channel, "✅ | **¡Revisa tus mensajes directos!**");
   },
   SlashCommand: {
     /**
@@ -103,17 +103,17 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
       if (!player.playing)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -121,11 +121,11 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+          "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
         );
       try {
         let embed = new MessageEmbed()
-          .setAuthor(`Song saved: `, client.user.displayAvatarURL())
+          .setAuthor(`Canción guardada: `, client.user.displayAvatarURL())
           .setThumbnail(
             `https://img.youtube.com/vi/${player.queue.current.identifier}/mqdefault.jpg`
           )
@@ -134,34 +134,34 @@ module.exports = {
           .setTimestamp()
           .setTitle(`**${player.queue.current.title}**`);
         if (player.queue.current.duration == 9223372036854776000) {
-          d = "Live";
+          d = "En vivo";
         } else {
           d = prettyMilliseconds(player.queue.current.duration, {
             colonNotation: true,
           });
         }
         embed
-          .addField(`⌛ Duration: `, `\`${d}\``, true)
-          .addField(`🎵 Author: `, `\`${player.queue.current.author}\``, true)
+          .addField(`⌛ Duración: `, `\`${d}\``, true)
+          .addField(`🎵 Autor: `, `\`${player.queue.current.author}\``, true)
           .addField(
-            `▶ Play it:`,
+            `▶ Reproducir:`,
             `\`${
               GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix
             }play ${player.queue.current.uri}\``
           )
-          .addField(`🔎 Saved in:`, `<#${interaction.channel_id}>`)
+          .addField(`🔎 Guardado en:`, `<#${interaction.channel_id}>`)
           .setFooter(
-            `Requested by: ${player.queue.current.requester.tag}`,
+            `Solicitado por: ${player.queue.current.requester.tag}`,
             player.queue.current.requester.displayAvatarURL({
               dynamic: true,
             })
           );
         user.send(embed);
       } catch (e) {
-        return client.sendTime(interaction, "**❌ Your DMs are disabled**");
+        return client.sendTime(interaction, "**❌ Tus mensajes directos están desactivados**");
       }
 
-      client.sendTime(interaction, "✅ | **Check your DMs!**");
+      client.sendTime(interaction, "✅ | **¡Revisa tus mensajes directos!**");
     },
   },
 };
