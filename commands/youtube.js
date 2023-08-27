@@ -2,10 +2,10 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
   name: "youtube",
-  description: "Starts a YouTube Together session",
+  description: "Inicia una sesión de YouTube Together",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["yt"],
@@ -20,7 +20,7 @@ module.exports = {
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to play something!**"
+        "❌ | **Debes estar en un canal de voz para reproducir algo.**"
       );
     if (
       !message.member.voice.channel
@@ -29,23 +29,23 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **Bot doesn't have Create Invite Permission**"
+        "❌ | **El bot no tiene el permiso para crear invitaciones.**"
       );
 
     let Invite = await message.member.voice.channel.activityInvite(
       "880218394199220334"
-    ); //Made using discordjs-activity package
+    ); // Hecho usando el paquete discordjs-activity
     let embed = new MessageEmbed()
       .setAuthor(
         "YouTube Together",
         "https://cdn.discordapp.com/emojis/749289646097432667.png?v=1"
       )
       .setColor("#FF0000").setDescription(`
-Using **YouTube Together** you can watch YouTube with your friends in a Voice Channel. Click *Join YouTube Together* to join in!
+Usando **YouTube Together** puedes ver videos de YouTube con tus amigos en un canal de voz. ¡Haz clic en *Unirse a YouTube Together* para unirte!
 
-__**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
+__**[Unirse a YouTube Together](https://discord.com/invite/${Invite.code})**__
 
-⚠ **Note:** This only works in Desktop
+⚠ **Nota:** Esto solo funciona en la versión de escritorio
 `);
     message.channel.send(embed);
   },
@@ -65,7 +65,7 @@ __**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | You must be in a voice channel to use this command."
+          "❌ | Debes estar en un canal de voz para usar este comando."
         );
       if (
         !member.voice.channel
@@ -74,23 +74,23 @@ __**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
       )
         return client.sendTime(
           interaction,
-          "❌ | **Bot doesn't have Create Invite Permission**"
+          "❌ | **El bot no tiene el permiso para crear invitaciones.**"
         );
 
       let Invite = await member.voice.channel.activityInvite(
         "755600276941176913"
-      ); //Made using discordjs-activity package
+      ); // Hecho usando el paquete discordjs-activity
       let embed = new MessageEmbed()
         .setAuthor(
           "YouTube Together",
           "https://cdn.discordapp.com/emojis/749289646097432667.png?v=1"
         )
         .setColor("#FF0000").setDescription(`
-Using **YouTube Together** you can watch YouTube with your friends in a Voice Channel. Click *Join YouTube Together* to join in!
+Usando **YouTube Together** puedes ver videos de YouTube con tus amigos en un canal de voz. ¡Haz clic en *Unirse a YouTube Together* para unirte!
 
-__**[Join YouTube Together](https://discord.com/invite/${Invite.code})**__
+__**[Unirse a YouTube Together](https://discord.com/invite/${Invite.code})**__
 
-⚠ **Note:** This only works in Desktop
+⚠ **Nota:** Esto solo funciona en la versión de escritorio
 `);
       interaction.send(embed.toJSON());
     },
