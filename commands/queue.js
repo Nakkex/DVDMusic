@@ -4,11 +4,11 @@ const prettyMilliseconds = require("pretty-ms");
 let d;
 
 module.exports = {
-  name: "cola",
-  description: "Muestra todas las canciones actualmente encoladas",
+  name: "queue",
+  description: "Muestra todas las canciones encoladas actualmente",
   usage: "",
   permissions: {
-    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
+    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["q"],
@@ -24,24 +24,24 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nada se está reproduciendo en este momento...**"
+        "❌ | **No se está reproduciendo nada en este momento...**"
       );
 
     if (!player.queue || !player.queue.length || player.queue === 0) {
-      let QueueEmbed = new MessageEmbed()
+      let EmbedCola = new MessageEmbed()
         .setAuthor("Reproduciendo actualmente", client.botconfig.IconURL)
         .setColor(client.botconfig.EmbedColor)
         .setDescription(
           `[${player.queue.current.title}](${player.queue.current.uri})`
         )
-        .addField("Solicitado por", `${player.queue.current.requester}`, true)
+        .addField("Pedido por", `${player.queue.current.requester}`, true)
         .setThumbnail(player.queue.current.displayThumbnail());
 
-      // Comprobar si la duración coincide con la duración de una transmisión en vivo
+      // Comprueba si la duración coincide con la duración de una transmisión en vivo
       if (player.queue.current.duration == 9223372036854776000) {
-        QueueEmbed.addField("Duración", `\`En vivo\``, true);
+        EmbedCola.addField("Duración", `\`En Vivo\``, true);
       } else {
-        QueueEmbed.addField(
+        EmbedCola.addField(
           "Duración",
           `${
             client.ProgressBar(
@@ -57,7 +57,7 @@ module.exports = {
         );
       }
 
-      return message.channel.send(QueueEmbed);
+      return message.channel.send(EmbedCola);
     }
 
     let Canciones = player.queue.map((t, index) => {
@@ -65,47 +65,47 @@ module.exports = {
       return t;
     });
 
-    let CancionesPorPagina = _.chunk(Canciones, 10); // Cuántas canciones mostrar por página
+    let CancionesPorBloque = _.chunk(Canciones, 10); // Cantidad de canciones a mostrar por página
 
-    let Páginas = CancionesPorPagina.map((Pistas) => {
-      let DescripciónCanciones = Pistas.map((t) => {
+    let Páginas = CancionesPorBloque.map((Tracks) => {
+      let DescripciónCanciones = Tracks.map((t) => {
         let d;
-        // Comprobar si la duración coincide con la duración de una transmisión en vivo
+        // Comprueba si la duración coincide con la duración de una transmisión en vivo
         if (t.duration == 9223372036854776000) {
-          d = "En vivo";
+          d = "En Vivo";
         } else {
           d = prettyMilliseconds(t.duration, { colonNotation: true });
         }
         return `\`${t.index + 1}.\` [${t.title}](${
           t.uri
-        }) \n\`${d}\` **|** Solicitado por: ${t.requester}\n`;
+        }) \n\`${d}\` **|** Pedido por: ${t.requester}\n`;
       }).join("\n");
 
-      let Embed = new MessageEmbed()
-        .setAuthor("Cola", client.botconfig.IconURL)
+      let EmbedCola = new MessageEmbed()
+        .setAuthor("Cola de Reproducción", client.botconfig.IconURL)
         .setColor(client.botconfig.EmbedColor)
         .setDescription(
-          `**Reproduciendo actualmente:** \n[${player.queue.current.title}](${player.queue.current.uri}) \n\n**A continuación:** \n${DescripciónCanciones}\n\n`
+          `**Reproduciendo Actualmente:** \n[${player.queue.current.title}](${player.queue.current.uri}) \n\n**Próximas:** \n${DescripciónCanciones}\n\n`
         )
         .addField("Total de canciones: \n", `\`${player.queue.totalSize - 1}\``, true);
 
-      // Comprobar si la duración coincide con la duración de una transmisión en vivo
+      // Comprueba si la duración coincide con la duración de una transmisión en vivo
       if (player.queue.duration >= 9223372036854776000) {
-        d = "En vivo";
+        d = "En Vivo";
       } else {
         d = prettyMilliseconds(player.queue.duration, { colonNotation: true });
       }
 
-      Embed.addField("Duración total: \n", `\`${d}\``, true).addField(
-        "Solicitado por:",
+      EmbedCola.addField("Duración Total: \n", `\`${d}\``, true).addField(
+        "Pedido por:",
         `${player.queue.current.requester}`,
         true
       );
 
       if (player.queue.current.duration == 9223372036854776000) {
-        Embed.addField("Duración de la canción actual:", "`En vivo`");
+        EmbedCola.addField("Duración de la canción actual:", "`En Vivo`");
       } else {
-        Embed.addField(
+        EmbedCola.addField(
           "Duración de la canción actual:",
           `${
             client.ProgressBar(
@@ -121,9 +121,9 @@ module.exports = {
         );
       }
 
-      Embed.setThumbnail(player.queue.current.displayThumbnail());
+      EmbedCola.setThumbnail(player.queue.current.displayThumbnail());
 
-      return Embed;
+      return EmbedCola;
     });
 
     if (!Páginas.length || Páginas.length === 1)
@@ -154,22 +154,22 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nada se está reproduciendo en este momento...**"
+          "❌ | **No se está reproduciendo nada en este momento...**"
         );
 
       if (!player.queue || !player.queue.length || player.queue === 0) {
-        let QueueEmbed = new MessageEmbed()
+        let EmbedCola = new MessageEmbed()
           .setAuthor("Reproduciendo actualmente", client.botconfig.IconURL)
           .setColor(client.botconfig.EmbedColor)
           .setDescription(
             `[${player.queue.current.title}](${player.queue.current.uri})`
           )
-          .addField("Solicitado por", `${player.queue.current.requester}`, true)
+          .addField("Pedido por", `${player.queue.current.requester}`, true)
           .setThumbnail(player.queue.current.displayThumbnail());
         if (player.queue.current.duration == 9223372036854776000) {
-          QueueEmbed.addField("Duración", `\`En vivo\``, true);
+          EmbedCola.addField("Duración", `\`En Vivo\``, true);
         } else {
-          QueueEmbed.addField(
+          EmbedCola.addField(
             "Duración",
             `${
               client.ProgressBar(
@@ -184,7 +184,7 @@ module.exports = {
             })}]\``
           );
         }
-        return interaction.send(QueueEmbed);
+        return interaction.send(EmbedCola);
       }
 
       let Canciones = player.queue.map((t, index) => {
@@ -192,47 +192,53 @@ module.exports = {
         return t;
       });
 
-      let CancionesPorPagina = _.chunk(Canciones, 10); // Cuántas canciones mostrar por página
+      let CancionesPorBloque = _.chunk(Canciones, 10); // Cantidad de canciones a mostrar por página
 
-      let Páginas = CancionesPorPagina.map((Pistas) => {
-        let DescripciónCanciones = Pistas.map((t) => {
+      let Páginas = CancionesPorBloque.map((Tracks) => {
+        let DescripciónCanciones = Tracks.map((t) => {
           let d;
-          // Comprobar si la duración coincide con la duración de una transmisión en vivo
+          // Comprueba si la duración coincide con la duración de una transmisión en vivo
           if (t.duration == 9223372036854776000) {
-            d = "En vivo";
+            d = "En Vivo";
           } else {
             d = prettyMilliseconds(t.duration, { colonNotation: true });
           }
           return `\`${t.index + 1}.\` [${t.title}](${
             t.uri
-          }) \n\`${d}\` **|** Solicitado por: ${t.requester}\n`;
+          }) \n\`${d}\` **|** Pedido por: ${t.requester}\n`;
         }).join("\n");
 
-        let Embed = new MessageEmbed()
-          .setAuthor("Cola", client.botconfig.IconURL)
+        let EmbedCola = new MessageEmbed()
+          .setAuthor("Cola de Reproducción", client.botconfig.IconURL)
           .setColor(client.botconfig.EmbedColor)
           .setDescription(
-            `**Reproduciendo actualmente:** \n[${player.queue.current.title}](${player.queue.current.uri}) \n\n**A continuación:** \n${DescripciónCanciones}\n\n`
+            `**Reproduciendo Actualmente:** \n[${player.queue.current.title}](${player.queue.current.uri}) \n\n**Próximas:** \n${DescripciónCanciones}\n\n`
           )
-          .addField("Total de canciones: \n", `\`${player.queue.totalSize - 1}\``, true);
+          .addField(
+            "Total de canciones: \n",
+            `\`${player.queue.totalSize - 1}\``,
+            true
+          );
 
-        // Comprobar si la duración coincide con la duración de una transmisión en vivo
+        // Comprueba si la duración coincide con la duración de una transmisión en vivo
         if (player.queue.duration >= 9223372036854776000) {
-          d = "En vivo";
+          d = "En Vivo";
         } else {
-          d = prettyMilliseconds(player.queue.duration, { colonNotation: true });
+          d = prettyMilliseconds(player.queue.duration, {
+            colonNotation: true,
+          });
         }
 
-        Embed.addField("Duración total: \n", `\`${d}\``, true).addField(
-          "Solicitado por:",
+        EmbedCola.addField("Duración Total: \n", `\`${d}\``, true).addField(
+          "Pedido por:",
           `${player.queue.current.requester}`,
           true
         );
 
         if (player.queue.current.duration == 9223372036854776000) {
-          Embed.addField("Duración de la canción actual:", "`En vivo`");
+          EmbedCola.addField("Duración de la canción actual:", "`En Vivo`");
         } else {
-          Embed.addField(
+          EmbedCola.addField(
             "Duración de la canción actual:",
             `${
               client.ProgressBar(
@@ -248,9 +254,9 @@ module.exports = {
           );
         }
 
-        Embed.setThumbnail(player.queue.current.displayThumbnail());
+        EmbedCola.setThumbnail(player.queue.current.displayThumbnail());
 
-        return Embed;
+        return EmbedCola;
       });
 
       if (!Páginas.length || Páginas.length === 1)
@@ -259,4 +265,3 @@ module.exports = {
     },
   },
 };
-
