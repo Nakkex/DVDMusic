@@ -1,48 +1,52 @@
 const { DiscordMusicBot } = require("../structures/DiscordMusicBot");
 const { VoiceState, MessageEmbed } = require("discord.js");
+
 /**
  *
- * @param {DiscordMusicBot} client
- * @param {VoiceState} oldState
- * @param {VoiceState} newState
+ * @param {DiscordMusicBot} client - Instancia del bot personalizada
+ * @param {VoiceState} oldState - Estado de voz anterior
+ * @param {VoiceState} newState - Estado de voz nuevo
  * @returns {Promise<void>}
  */
 module.exports = async (client, oldState, newState) => {
-  // get guild and player
-  let guildId = newState.guild.id;
+  // Obtener el ID del servidor (guild) y el reproductor (player)
+  const guildId = newState.guild.id;
   const player = client.Manager.get(guildId);
 
-  // check if the bot is active (playing, paused or empty does not matter (return otherwise)
+  // Comprobar si el bot está activo (reproduciendo, en pausa o vacío)
   if (!player || player.state !== "CONNECTED") return;
 
-  // prepreoces the data
+  // Preparar los datos del cambio de estado
   const stateChange = {};
-  // get the state change
+
+  // Obtener el tipo de cambio de estado
   if (oldState.channel === null && newState.channel !== null)
     stateChange.type = "JOIN";
   if (oldState.channel !== null && newState.channel === null)
     stateChange.type = "LEAVE";
   if (oldState.channel !== null && newState.channel !== null)
     stateChange.type = "MOVE";
-  if (oldState.channel === null && newState.channel === null) return; // you never know, right
+  if (oldState.channel === null && newState.channel === null) return;
   if (newState.serverMute == true && oldState.serverMute == false)
     return player.pause(true);
   if (newState.serverMute == false && oldState.serverMute == true)
     return player.pause(false);
-  // move check first as it changes type
+
+  // Comprobar primero el cambio de MOVE ya que cambia el tipo
   if (stateChange.type === "MOVE") {
     if (oldState.channel.id === player.voiceChannel) stateChange.type = "LEAVE";
     if (newState.channel.id === player.voiceChannel) stateChange.type = "JOIN";
   }
-  // double triggered on purpose for MOVE events
+
+  // Asignar el canal correspondiente al tipo de cambio
   if (stateChange.type === "JOIN") stateChange.channel = newState.channel;
   if (stateChange.type === "LEAVE") stateChange.channel = oldState.channel;
 
-  // check if the bot's voice channel is involved (return otherwise)
+  // Comprobar si el canal de voz del bot está involucrado (salir si no está involucrado)
   if (!stateChange.channel || stateChange.channel.id !== player.voiceChannel)
     return;
 
-  // filter current users based on being a bot
+  // Filtrar los miembros actuales en función de si son bots o no
   stateChange.members = stateChange.channel.members.filter(
     (member) => !member.user.bot
   );
@@ -50,6 +54,7 @@ module.exports = async (client, oldState, newState) => {
   switch (stateChange.type) {
     case "JOIN":
       if (stateChange.members.size === 1 && player.paused) {
+        // Reanudar la reproducción si había un solo miembro en el canal y estaba en pausa
         let emb = new MessageEmbed()
           .setAuthor(`Resuming paused queue`, client.botconfig.IconURL)
           .setColor(client.botconfig.EmbedColor)
@@ -58,7 +63,7 @@ module.exports = async (client, oldState, newState) => {
           );
         await client.channels.cache.get(player.textChannel).send(emb);
 
-        // update the now playing message and bring it to the front
+        // Actualizar el mensaje "now playing" y llevarlo al frente
         let msg2 = await client.channels.cache
           .get(player.textChannel)
           .send(player.nowPlayingMessage.embeds[0]);
@@ -69,6 +74,7 @@ module.exports = async (client, oldState, newState) => {
       break;
     case "LEAVE":
       if (stateChange.members.size === 0 && !player.paused && player.playing) {
+        // Pausar la reproducción si todos los miembros abandonan el canal
         player.pause(true);
 
         let emb = new MessageEmbed()
