@@ -2,14 +2,14 @@ const { MessageEmbed } = require("discord.js");
 const { TrackUtils } = require("erela.js");
 
 module.exports = {
-  name: "skip",
-  description: "Skip the current song",
+  name: "saltar",
+  description: "Saltar la canción actual",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
-  aliases: ["s", "next"],
+  aliases: ["s", "siguiente"],
   /**
    *
    * @param {import("../structures/DiscordMusicBot")} client
@@ -22,12 +22,12 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **No se está reproduciendo nada en este momento...**"
       );
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to use this command!**"
+        "❌ | **Debes estar en un canal de voz para usar este comando.**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -35,7 +35,7 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
       );
     player.stop();
     await message.react("✅");
@@ -55,7 +55,7 @@ module.exports = {
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -63,10 +63,10 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          "❌ | **You must be in the same voice channel as me to use this command!**"
+          "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
         );
 
-      const skipTo = interaction.data.options
+      const saltarHasta = interaction.data.options
         ? interaction.data.options[0].value
         : null;
 
@@ -75,16 +75,16 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **No se está reproduciendo nada en este momento...**"
         );
       console.log(interaction.data);
       if (
-        skipTo !== null &&
-        (isNaN(skipTo) || skipTo < 1 || skipTo > player.queue.length)
+        saltarHasta !== null &&
+        (isNaN(saltarHasta) || saltarHasta < 1 || saltarHasta > player.queue.length)
       )
-        return client.sendTime(interaction, "❌ | **Invalid number to skip!**");
-      player.stop(skipTo);
-      client.sendTime(interaction, "**Skipped!**");
+        return client.sendTime(interaction, "❌ | **Número inválido para saltar!**");
+      player.stop(saltarHasta);
+      client.sendTime(interaction, "**¡Saltado!**");
     },
   },
 };
