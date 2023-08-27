@@ -3,10 +3,10 @@ const { TrackUtils } = require("erela.js");
 
 module.exports = {
   name: "bump",
-  description: "Moves a track to the front of the queue.",
+  description: "Mueve una pista al frente de la cola.",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["b"],
@@ -22,35 +22,35 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
     if (!args[0])
-      return client.sendTime(message.channel, "❌ | **Invalid arguments.**");
+      return client.sendTime(message.channel, "❌ | **Argumentos inválidos.**");
 
-    // Check if (args[0] - 1) is a valid index
-    let trackNum = parseInt(args[0] - 1);
-    if (trackNum < 1 || trackNum > player.queue.length - 1) {
-      return client.sendTime(message.channel, "❌ | **Invalid track number.**");
+    // Verifica si (args[0] - 1) es un índice válido
+    let numPista = parseInt(args[0] - 1);
+    if (numPista < 1 || numPista > player.queue.length - 1) {
+      return client.sendTime(message.channel, "❌ | **Número de pista inválido.**");
     }
 
-    // Remove from and shift array
-    const track = player.queue[trackNum];
-    player.queue.splice(trackNum, 1);
-    player.queue.unshift(track);
+    // Elimina y desplaza el arreglo
+    const pista = player.queue[numPista];
+    player.queue.splice(numPista, 1);
+    player.queue.unshift(pista);
     client.sendTime(
       message.channel,
-      "✅ | **" + track.title + "** has been moved to the front of the queue."
+      "✅ | **" + pista.title + "** ha sido movida al frente de la cola."
     );
   },
 
   SlashCommand: {
     options: [
       {
-        name: "track",
-        value: "track",
+        name: "pista",
+        value: "pista",
         type: 4,
         required: true,
-        description: "Moves selected track to the front of the queue.",
+        description: "Mueve la pista seleccionada al frente de la cola.",
       },
     ],
     /**
@@ -68,26 +68,26 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
       if (!args[0].value)
-        return client.sendTime(interaction, "❌ | **Invalid track number.**");
+        return client.sendTime(interaction, "❌ | **Número de pista inválido.**");
 
-      // Check if (args[0] - 1) is a valid index
-      let trackNum = parseInt(args[0].value - 1);
-      if (trackNum < 1 || trackNum > player.queue.length - 1) {
-        return client.sendTime(interaction, "❌ | **Invalid track number.**");
+      // Verifica si (args[0] - 1) es un índice válido
+      let numPista = parseInt(args[0].value - 1);
+      if (numPista < 1 || numPista > player.queue.length - 1) {
+        return client.sendTime(interaction, "❌ | **Número de pista inválido.**");
       }
 
-      // Remove from and shift array
-      const track = player.queue[trackNum];
-      player.queue.splice(trackNum, 1);
-      player.queue.unshift(track);
+      // Elimina y desplaza el arreglo
+      const pista = player.queue[numPista];
+      player.queue.splice(numPista, 1);
+      player.queue.unshift(pista);
       client.sendTime(
         interaction,
         "✅ | **" +
           player.queue[0].title +
-          "** has been moved to the front of the queue."
+          "** ha sido movida al frente de la cola."
       );
     },
   },
