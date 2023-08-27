@@ -2,11 +2,11 @@ const { MessageEmbed } = require("discord.js");
 const { TrackUtils, Player } = require("erela.js");
 
 module.exports = {
-  name: "skipto",
-  description: `Skip to a song in the queue`,
-  usage: "<number>",
+  name: "saltarhasta",
+  description: "Saltar hasta una canción en la cola",
+  usage: "<número>",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["st"],
@@ -28,12 +28,12 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **No se está reproduciendo nada en este momento...**"
       );
     if (!message.member.voice.channel)
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in a voice channel to use this command!**"
+        "❌ | **Debes estar en un canal de voz para usar este comando.**"
       );
     if (
       message.guild.me.voice.channel &&
@@ -41,43 +41,43 @@ module.exports = {
     )
       return client.sendTime(
         message.channel,
-        "❌ | **You must be in the same voice channel as me to use this command!**"
+        "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
       );
 
     try {
       if (!args[0])
         return client.sendTime(
           message.channel,
-          `**Usage**: \`${GuildDB.prefix}skipto [number]\``
+          `**Uso**: \`${GuildDB.prefix}saltarhasta [número]\``
         );
-      //if the wished track is bigger then the Queue Size
+      // Si el número de la canción deseada es mayor que el tamaño de la cola
       if (Number(args[0]) > player.queue.size)
         return client.sendTime(
           message.channel,
-          `❌ | That song is not in the queue! Please try again!`
+          "❌ | ¡Esa canción no está en la cola! ¡Por favor, inténtalo de nuevo!"
         );
-      //remove all tracks to the jumped song
+      // Elimina todas las canciones hasta la canción deseada
       player.queue.remove(0, Number(args[0]) - 1);
-      //stop the player
+      // Detiene al reproductor
       player.stop();
-      //Send Success Message
+      // Envia mensaje de éxito
       return client.sendTime(
         message.channel,
-        `⏭ Skipped \`${Number(args[0] - 1)}\` songs`
+        `⏭ Saltado \`${Number(args[0] - 1)}\` canciones`
       );
     } catch (e) {
       console.log(String(e.stack).bgRed);
-      client.sendError(message.channel, "Something went wrong.");
+      client.sendError(message.channel, "Algo salió mal.");
     }
   },
   SlashCommand: {
     options: [
       {
-        name: "position",
-        value: "[position]",
+        name: "posición",
+        value: "[posición]",
         type: 4,
         required: true,
-        description: "Skips to a specific song in the queue",
+        description: "Saltar hasta una canción específica en la cola",
       },
     ],
     /**
@@ -91,11 +91,11 @@ module.exports = {
       const guild = client.guilds.cache.get(interaction.guild_id);
       const member = guild.members.cache.get(interaction.member.user.id);
       const voiceChannel = member.voice.channel;
-      let awaitchannel = client.channels.cache.get(interaction.channel_id); /// thanks Reyansh for this idea ;-;
+      let awaitchannel = client.channels.cache.get(interaction.channel_id);
       if (!member.voice.channel)
         return client.sendTime(
           interaction,
-          "❌ | **You must be in a voice channel to use this command.**"
+          "❌ | **Debes estar en un canal de voz para usar este comando.**"
         );
       if (
         guild.me.voice.channel &&
@@ -103,13 +103,13 @@ module.exports = {
       )
         return client.sendTime(
           interaction,
-          `❌ | **You must be in the same voice channel as me to use this command!**`
+          "❌ | **Debes estar en el mismo canal de voz que yo para usar este comando.**"
         );
       let CheckNode = client.Manager.nodes.get(client.botconfig.Lavalink.id);
       if (!CheckNode || !CheckNode.connected) {
         return client.sendTime(
           interaction,
-          "❌ | **Lavalink node not connected**"
+          "❌ | **Nodo de Lavalink no conectado**"
         );
       }
 
@@ -124,28 +124,28 @@ module.exports = {
         if (!interaction.data.options)
           return client.sendTime(
             interaction,
-            `**Usage**: \`${GuildDB.prefix}skipto <number>\``
+            `**Uso**: \`${GuildDB.prefix}saltarhasta <número>\``
           );
-        let skipTo = interaction.data.options[0].value;
-        //if the wished track is bigger then the Queue Size
+        let saltarHasta = interaction.data.options[0].value;
+        // Si el número de la canción deseada es inválido
         if (
-          skipTo !== null &&
-          (isNaN(skipTo) || skipTo < 1 || skipTo > player.queue.length)
+          saltarHasta !== null &&
+          (isNaN(saltarHasta) || saltarHasta < 1 || saltarHasta > player.queue.length)
         )
           return client.sendTime(
             interaction,
-            `❌ | That song is not in the queue! Please try again!`
+            "❌ | ¡Esa canción no está en la cola! ¡Por favor, inténtalo de nuevo!"
           );
 
-        player.stop(skipTo);
-        //Send Success Message
+        player.stop(saltarHasta);
+        // Envia mensaje de éxito
         return client.sendTime(
           interaction,
-          `⏭ Skipped \`${Number(skipTo)}\` songs`
+          `⏭ Saltado \`${Number(saltarHasta)}\` canciones`
         );
       } catch (e) {
         console.log(String(e.stack).bgRed);
-        client.sendError(interaction, "Something went wrong.");
+        client.sendError(interaction, "Algo salió mal.");
       }
     },
   },
