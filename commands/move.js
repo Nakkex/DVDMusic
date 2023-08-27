@@ -3,10 +3,10 @@ const { TrackUtils } = require("erela.js");
 
 module.exports = {
   name: "move",
-  description: "Moves a track to a specified position.",
+  description: "Mueve una pista a una posición específica.",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["m"],
@@ -22,26 +22,29 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
     if (!args[0] || !args[1])
-      return client.sendTime(message.channel, "❌ | **Invalid arguments.**");
+      return client.sendTime(message.channel, "❌ | **Argumentos inválidos.**");
 
-    // Check if (args[0] - 1) is a valid index
+    // Comprobar si (args[0] - 1) es un índice válido
     let trackNum = parseInt(args[0] - 1);
     if (trackNum < 1 || trackNum > player.queue.length - 1) {
-      return client.sendTime(message.channel, "❌ | **Invalid track number.**");
+      return client.sendTime(
+        message.channel,
+        "❌ | **Número de pista inválido.**"
+      );
     }
 
     let dest = parseInt(args[1] - 1);
     if (dest < 1 || dest > player.queue.length - 1) {
       return client.sendTime(
         message.channel,
-        "❌ | **Invalid track destination.**"
+        "❌ | **Destino de pista inválido.**"
       );
     }
 
-    // Remove from and shift array
+    // Eliminar y desplazar en el array
     const track = player.queue[trackNum];
     player.queue.splice(trackNum, 1);
     player.queue.splice(dest, 0, track);
@@ -49,7 +52,7 @@ module.exports = {
       message.channel,
       "✅ | **" +
         track.title +
-        "** has been moved to position " +
+        "** ha sido movido a la posición " +
         (dest + 1) +
         "."
     );
@@ -58,18 +61,18 @@ module.exports = {
   SlashCommand: {
     options: [
       {
-        name: "track",
-        value: "track",
+        name: "pista",
+        value: "pista",
         type: 4,
         required: true,
-        description: "Track to move.",
+        description: "Pista para mover.",
       },
       {
-        name: "position",
-        value: "track2",
+        name: "posicion",
+        value: "pista2",
         type: 4,
         required: true,
-        description: "Moves selected track to the specified position.",
+        description: "Mueve la pista seleccionada a la posición especificada.",
       },
     ],
     /**
@@ -87,26 +90,26 @@ module.exports = {
       if (!player)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
       if (!args[0].value || !args[1].value)
-        return client.sendTime(interaction, "❌ | **Invalid track number.**");
+        return client.sendTime(interaction, "❌ | **Número de pista inválido.**");
 
-      // Check if (args[0] - 1) is a valid index
+      // Comprobar si (args[0] - 1) es un índice válido
       let trackNum = parseInt(args[0].value - 1);
       if (trackNum < 1 || trackNum > player.queue.length - 1) {
-        return client.sendTime(interaction, "❌ | **Invalid track number.**");
+        return client.sendTime(interaction, "❌ | **Número de pista inválido.**");
       }
 
       let dest = parseInt(args[1].value - 1);
       if (dest < 1 || dest > player.queue.length - 1) {
         return client.sendTime(
           interaction,
-          "❌ | **Invalid track destination.**"
+          "❌ | **Destino de pista inválido.**"
         );
       }
 
-      // Remove from and shift array
+      // Eliminar y desplazar en el array
       const track = player.queue[trackNum];
       player.queue.splice(trackNum, 1);
       player.queue.splice(dest, 0, track);
@@ -114,7 +117,7 @@ module.exports = {
         interaction,
         "✅ | **" +
           track.title +
-          "** has been moved to position " +
+          "** ha sido movido a la posición " +
           (dest + 1) +
           "."
       );
