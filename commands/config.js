@@ -2,11 +2,11 @@ const { MessageEmbed, MessageReaction } = require("discord.js");
 
 module.exports = {
   name: "config",
-  description: "Edit the bot settings",
+  description: "Edita la configuración del bot",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
-    member: ["ADMINISTRATOR"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
+    member: ["ADMINISTRADOR"],
   },
   aliases: ["conf"],
   /**
@@ -18,15 +18,15 @@ module.exports = {
    */
   run: async (client, message, args, { GuildDB }) => {
     let Config = new MessageEmbed()
-      .setAuthor("Server Config", client.botconfig.IconURL)
+      .setAuthor("Configuración del Servidor", client.botconfig.IconURL)
       .setColor(client.botconfig.EmbedColor)
-      .addField("Prefix", GuildDB.prefix, true)
-      .addField("DJ Role", GuildDB.DJ ? `<@&${GuildDB.DJ}>` : "Not Set", true)
+      .addField("Prefijo", GuildDB.prefix, true)
+      .addField("Rol de DJ", GuildDB.DJ ? `<@&${GuildDB.DJ}>` : "No establecido", true)
       .setDescription(`
-What would you like to edit?
+¿Qué te gustaría editar?
 
-:one: - Server Prefix
-:two: - DJ Role
+:one: - Prefijo del Servidor
+:two: - Rol de DJ
 `);
 
     let ConfigMessage = await message.channel.send(Config);
@@ -41,7 +41,7 @@ What would you like to edit?
       ConfigMessage.reactions.removeAll();
       client.sendTime(
         message.channel,
-        "❌ | **You took too long to respond. If you want to edit the settings, run the command again!**"
+        "❌ | **Has tardado demasiado en responder. Si deseas editar la configuración, ejecuta el comando nuevamente.**"
       );
       ConfigMessage.delete(Config);
     });
@@ -51,66 +51,66 @@ What would you like to edit?
     } catch {
       isOk = true;
     }
-    if (isOk) return; //im idiot sry ;-;
+    if (isOk) return; // Soy un idiota, lo siento ;-;
     /**@type {MessageReaction} */
     let em = emoji;
     ConfigMessage.reactions.removeAll();
     if (em._emoji.name === "1️⃣") {
       await client.sendTime(
         message.channel,
-        "What do you want to change the prefix to?"
+        "¿A qué prefijo te gustaría cambiar?"
       );
-      let prefix = await message.channel.awaitMessages(
+      let prefijo = await message.channel.awaitMessages(
         (msg) => msg.author.id === message.author.id,
         { max: 1, time: 30000, errors: ["time"] }
       );
-      if (!prefix.first())
+      if (!prefijo.first())
         return client.sendTime(
           message.channel,
-          "You took too long to respond."
+          "Has tardado demasiado en responder."
         );
-      prefix = prefix.first();
-      prefix = prefix.content;
+      prefijo = prefijo.first();
+      prefijo = prefijo.content;
 
       await client.database.guild.set(message.guild.id, {
-        prefix: prefix,
+        prefix: prefijo,
         DJ: GuildDB.DJ,
       });
 
       client.sendTime(
         message.channel,
-        `Successfully saved guild prefix as \`${prefix}\``
+        `Prefijo del servidor guardado exitosamente como \`${prefijo}\``
       );
     } else {
       await client.sendTime(
         message.channel,
-        "Please mention the role you want `DJ's` to have."
+        "Por favor menciona el rol que deseas que tengan los `DJ`."
       );
-      let role = await message.channel.awaitMessages(
+      let rol = await message.channel.awaitMessages(
         (msg) => msg.author.id === message.author.id,
         { max: 1, time: 30000, errors: ["time"] }
       );
-      if (!role.first())
+      if (!rol.first())
         return client.sendTime(
           message.channel,
-          "You took too long to respond."
+          "Has tardado demasiado en responder."
         );
-      role = role.first();
-      if (!role.mentions.roles.first())
+      rol = rol.first();
+      if (!rol.mentions.roles.first())
         return client.sendTime(
           message.channel,
-          "Please mention the role that you want for DJ's only."
+          "Por favor menciona el rol que deseas para los DJ solamente."
         );
-      role = role.mentions.roles.first();
+      rol = rol.mentions.roles.first();
 
       await client.database.guild.set(message.guild.id, {
         prefix: GuildDB.prefix,
-        DJ: role.id,
+        DJ: rol.id,
       });
 
       client.sendTime(
         message.channel,
-        "Successfully saved DJ role as <@&" + role.id + ">"
+        "Rol de DJ guardado exitosamente como <@&" + rol.id + ">"
       );
     }
   },
@@ -119,13 +119,13 @@ What would you like to edit?
     options: [
       {
         name: "prefix",
-        description: "Check the bot's prefix",
+        description: "Ver el prefijo del bot",
         type: 1,
         required: false,
         options: [
           {
-            name: "symbol",
-            description: "Set the bot's prefix",
+            name: "símbolo",
+            description: "Establecer el prefijo del bot",
             type: 3,
             required: false,
           },
@@ -133,13 +133,13 @@ What would you like to edit?
       },
       {
         name: "dj",
-        description: "Check the DJ role",
+        description: "Ver el rol de DJ",
         type: 1,
         required: false,
         options: [
           {
-            name: "role",
-            description: "Set the DJ role",
+            name: "rol",
+            description: "Establecer el rol de DJ",
             type: 8,
             required: false,
           },
@@ -156,55 +156,55 @@ What would you like to edit?
     run: async (client, interaction, args, { GuildDB }) => {
       let config = interaction.data.options[0].name;
       let member = await interaction.guild.members.fetch(interaction.user_id);
-      //TODO: if no admin perms return...
+      //TODO: si no tiene permisos de administrador, retornar...
       if (config === "prefix") {
-        //prefix stuff
+        // Configuración de prefijo
         if (
           interaction.data.options[0].options &&
           interaction.data.options[0].options[0]
         ) {
-          //has prefix
-          let prefix = interaction.data.options[0].options[0].value;
+          // Tiene prefijo
+          let prefijo = interaction.data.options[0].options[0].value;
           await client.database.guild.set(interaction.guild.id, {
-            prefix: prefix,
+            prefix: prefijo,
             DJ: GuildDB.DJ,
           });
           client.sendTime(
             interaction,
-            `The prefix has now been set to \`${prefix}\``
+            `El prefijo ahora ha sido establecido como \`${prefijo}\``
           );
         } else {
-          //has not prefix
+          // No tiene prefijo
           client.sendTime(
             interaction,
-            `The prefix of this server is \`${GuildDB.prefix}\``
+            `El prefijo de este servidor es \`${GuildDB.prefix}\``
           );
         }
       } else if (config === "djrole") {
-        //DJ role
+        // Rol de DJ
         if (
           interaction.data.options[0].options &&
           interaction.data.options[0].options[0]
         ) {
-          let role = interaction.guild.roles.cache.get(
+          let rol = interaction.guild.roles.cache.get(
             interaction.data.options[0].options[0].value
           );
           await client.database.guild.set(interaction.guild.id, {
             prefix: GuildDB.prefix,
-            DJ: role.id,
+            DJ: rol.id,
           });
           client.sendTime(
             interaction,
-            `Successfully changed the DJ role of this server to ${role.name}`
+            `El rol de DJ de este servidor se ha cambiado exitosamente a ${rol.name}`
           );
         } else {
           /**
            * @type {require("discord.js").Role}
            */
-          let role = interaction.guild.roles.cache.get(GuildDB.DJ);
+          let rol = interaction.guild.roles.cache.get(GuildDB.DJ);
           client.sendTime(
             interaction,
-            `The DJ role of this server is ${role.name}`
+            `El rol de DJ de este servidor es ${rol.name}`
           );
         }
       }
