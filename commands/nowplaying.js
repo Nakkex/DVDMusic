@@ -3,10 +3,10 @@ const prettyMilliseconds = require("pretty-ms");
 
 module.exports = {
   name: "nowplaying",
-  description: "See what song is currently playing",
+  description: "Ver qué canción se está reproduciendo actualmente",
   usage: "",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
   aliases: ["np", "nowplaying", "now playing"],
@@ -22,24 +22,24 @@ module.exports = {
     if (!player)
       return client.sendTime(
         message.channel,
-        "❌ | **Nothing is playing right now...**"
+        "❌ | **Nada se está reproduciendo en este momento...**"
       );
 
     let song = player.queue.current;
     let QueueEmbed = new MessageEmbed()
-      .setAuthor("Currently playing", client.botconfig.IconURL)
+      .setAuthor("Reproduciendo actualmente", client.botconfig.IconURL)
       .setColor(client.botconfig.EmbedColor)
       .setDescription(`[${song.title}](${song.uri})`)
-      .addField("Requested by", `${song.requester}`, true)
+      .addField("Solicitado por", `${song.requester}`, true)
       .setThumbnail(player.queue.current.displayThumbnail());
 
-    // Check if song duration matches livestream duration
+    // Comprobar si la duración de la canción coincide con la duración de la transmisión en vivo
 
     if (player.queue.current.duration == 9223372036854776000) {
-      QueueEmbed.addField("Duration", "`Live`");
+      QueueEmbed.addField("Duración", "`En vivo`");
     } else {
       QueueEmbed.addField(
-        "Duration",
+        "Duración",
         `${
           client.ProgressBar(player.position, player.queue.current.duration, 15)
             .Bar
@@ -67,24 +67,24 @@ module.exports = {
       if (!player.queue.current)
         return client.sendTime(
           interaction,
-          "❌ | **Nothing is playing right now...**"
+          "❌ | **Nada se está reproduciendo en este momento...**"
         );
 
       let song = player.queue.current;
       let QueueEmbed = new MessageEmbed()
-        .setAuthor("Currently playing", client.botconfig.IconURL)
+        .setAuthor("Reproduciendo actualmente", client.botconfig.IconURL)
         .setColor(client.botconfig.EmbedColor)
         .setDescription(`[${song.title}](${song.uri})`)
-        .addField("Requested by", `${song.requester}`, true)
+        .addField("Solicitado por", `${song.requester}`, true)
         .setThumbnail(player.queue.current.displayThumbnail());
 
-      // Check if song duration matches livestream duration
+      // Comprobar si la duración de la canción coincide con la duración de la transmisión en vivo
 
       if (player.queue.current.duration == 9223372036854776000) {
-        QueueEmbed.addField("Duration", "`Live`");
+        QueueEmbed.addField("Duración", "`En vivo`");
       } else {
         QueueEmbed.addField(
-          "Duration",
+          "Duración",
           `${
             client.ProgressBar(
               player.position,
