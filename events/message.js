@@ -2,7 +2,7 @@
  *
  * @param {require("../structures/DiscordMusicBot")} client
  * @param {require("discord.js").Message} message
- * @returns {void} aka: nothing ;-;
+ * @returns {void} aka: nada ;-;
  */
 
 module.exports = async (client, message) => {
@@ -12,7 +12,7 @@ module.exports = async (client, message) => {
   let GuildDB = await client.GetGuild(message.guild.id);
   if (GuildDB && GuildDB.prefix) prefix = GuildDB.prefix;
 
-  //Initialize GuildDB
+  // Inicializar GuildDB
   if (!GuildDB) {
     await client.database.guild.set(message.guild.id, {
       prefix: prefix,
@@ -21,24 +21,24 @@ module.exports = async (client, message) => {
     GuildDB = await client.GetGuild(message.guild.id);
   }
 
-  //Prefixes also have mention match
-  const prefixMention = new RegExp(`^<@!?${client.user.id}> `);
-  prefix = message.content.match(prefixMention)
-    ? message.content.match(prefixMention)[0]
+  // Los prefijos también pueden coincidir con menciones
+  const mencionDelPrefijo = new RegExp(`^<@!?${client.user.id}> `);
+  prefix = message.content.match(mencionDelPrefijo)
+    ? message.content.match(mencionDelPrefijo)[0]
     : prefix;
 
   if (message.content.indexOf(prefix) !== 0) return;
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
-  //Making the command lowerCase because our file name will be in lowerCase
-  const command = args.shift().toLowerCase();
+  // Convertir el comando a minúsculas ya que el nombre de los archivos estará en minúsculas
+  const comando = args.shift().toLowerCase();
 
-  //Searching a command
+  // Buscar un comando
   const cmd =
-    client.commands.get(command) ||
-    client.commands.find((x) => x.aliases && x.aliases.includes(command));
+    client.commands.get(comando) ||
+    client.commands.find((x) => x.aliases && x.aliases.includes(comando));
 
-  //Executing the codes when we get the command or aliases
+  // Ejecutar el código cuando se recibe el comando o sus alias
   if (cmd) {
     if (
       (cmd.permissions &&
@@ -60,8 +60,8 @@ module.exports = async (client, message) => {
     )
       return client.sendError(
         message.channel,
-        "Missing Permissions!" + GuildDB.DJ
-          ? " You need the `DJ` role to access this command."
+        "Permisos faltantes!" + GuildDB.DJ
+          ? " Necesitas el rol `DJ` para acceder a este comando."
           : ""
       );
     cmd.run(client, message, args, { GuildDB });
