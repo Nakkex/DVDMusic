@@ -3,13 +3,13 @@ const emojis = require('../emojis.json');
 
 module.exports = {
   name: "help",
-  description: "Information about the bot",
-  usage: "[command]",
+  description: "Información sobre el bot",
+  usage: "[comando]",
   permissions: {
-    channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
+    channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
     member: [],
   },
-  aliases: ["command", "commands", "cmd"],
+  aliases: ["comando", "comandos", "cmd"],
   /**
    *
    * @param {import("../structures/DiscordMusicBot")} client
@@ -27,19 +27,19 @@ module.exports = {
 
     let Embed = new MessageEmbed()
       .setAuthor(
-        `Commands of ${client.user.username}`,
+        `Comandos de ${client.user.username}`,
         client.botconfig.IconURL
       )
       .setColor(client.botconfig.EmbedColor)
       .setFooter(
-        `To get info of each command type ${
+        `Para obtener información de cada comando, escribe ${
           GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix
-        }help [Command] |  Made With ❤️`
+        }help [Comando] | Hecho con ❤️`
       ).setDescription(`${Commands.join("\n")}
   
       ${emojis.discord} [**Discord**](${
     client.botconfig.SupportServer
-  }) | ${emojis.dashboard} [**Dashboard**](${
+  }) | ${emojis.dashboard} [**Panel de Control**](${
       client.botconfig.Website
     })`);
     if (!args[0]) message.channel.send(Embed);
@@ -50,32 +50,32 @@ module.exports = {
       if (!cmd)
         return client.sendTime(
           message.channel,
-          `❌ | Unable to find that command.`
+          `❌ | No se pudo encontrar ese comando.`
         );
 
       let embed = new MessageEmbed()
-        .setAuthor(`Command: ${cmd.name}`, client.botconfig.IconURL)
+        .setAuthor(`Comando: ${cmd.name}`, client.botconfig.IconURL)
         .setDescription(cmd.description)
-        .setColor("GREEN")
-        //.addField("Name", cmd.name, true)
-        .addField("Aliases", `\`${cmd.aliases.join(", ")}\``, true)
+        .setColor("VERDE")
+        //.addField("Nombre", cmd.name, true)
+        .addField("Alias", `\`${cmd.aliases.join(", ")}\``, true)
         .addField(
-          "Usage",
+          "Uso",
           `\`${GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix}${
             cmd.name
           }${cmd.usage ? " " + cmd.usage : ""}\``,
           true
         )
         .addField(
-          "Permissions",
-          "Member: " +
+          "Permisos",
+          "Miembro: " +
             cmd.permissions.member.join(", ") +
             "\nBot: " +
             cmd.permissions.channel.join(", "),
           true
         )
         .setFooter(
-          `Prefix - ${
+          `Prefijo - ${
             GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix
           }`
         );
@@ -87,9 +87,9 @@ module.exports = {
   SlashCommand: {
     options: [
       {
-        name: "command",
-        description: "Get information on a specific command",
-        value: "command",
+        name: "comando",
+        description: "Obtener información sobre un comando específico",
+        value: "comando",
         type: 3,
         required: false,
       },
@@ -112,19 +112,19 @@ module.exports = {
 
       let Embed = new MessageEmbed()
         .setAuthor(
-          `Commands of ${client.user.username}`,
+          `Comandos de ${client.user.username}`,
           client.botconfig.IconURL
         )
         .setColor(client.botconfig.EmbedColor)
         .setFooter(
-          `To get info of each command type ${
+          `Para obtener información de cada comando, escribe ${
             GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix
-          }help [Command] | Made With ❤️`
+          }help [Comando] | Hecho con ❤️`
         ).setDescription(`${Commands.join("\n")}
   
         ${emojis.discord} [**Discord**](${
           client.botconfig.SupportServer
-        }) | ${emojis.dashboard} [**Dashboard**](${
+        }) | ${emojis.dashboard} [**Panel de Control**](${
             client.botconfig.Website
           })`);
       if (!args) return interaction.send(Embed);
@@ -137,32 +137,32 @@ module.exports = {
         if (!cmd)
           return client.sendTime(
             interaction,
-            `❌ | Unable to find that command.`
+            `❌ | No se pudo encontrar ese comando.`
           );
 
         let embed = new MessageEmbed()
-          .setAuthor(`Command: ${cmd.name}`, client.botconfig.IconURL)
+          .setAuthor(`Comando: ${cmd.name}`, client.botconfig.IconURL)
           .setDescription(cmd.description)
-          .setColor("GREEN")
-          //.addField("Name", cmd.name, true)
-          .addField("Aliases", cmd.aliases.join(", "), true)
+          .setColor("VERDE")
+          //.addField("Nombre", cmd.name, true)
+          .addField("Alias", cmd.aliases.join(", "), true)
           .addField(
-            "Usage",
+            "Uso",
             `\`${GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix}${
               cmd.name
             }\`${cmd.usage ? " " + cmd.usage : ""}`,
             true
           )
           .addField(
-            "Permissions",
-            "Member: " +
+            "Permisos",
+            "Miembro: " +
               cmd.permissions.member.join(", ") +
               "\nBot: " +
               cmd.permissions.channel.join(", "),
             true
           )
           .setFooter(
-            `Prefix - ${
+            `Prefijo - ${
               GuildDB ? GuildDB.prefix : client.botconfig.DefaultPrefix
             }`
           );
