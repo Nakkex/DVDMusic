@@ -16,13 +16,13 @@ Este es un bot de música para Discord que permite a los usuarios reproducir mú
 
 Para utilizar el bot, invítalo a tu servidor y únete a un canal de voz. Luego, utiliza los siguientes comandos en un canal de texto:
 
-- `/play <song name>`: Plays the specified song from YouTube
-- `/pause`: Pauses the playback
-- `/resume`: Resumes the playback
-- `/skip`: Skips to the next song in the queue
-- `/queue`: Shows the current queue
-- `/nowplaying`: Shows the current song
-- `/leave`: Leaves the voice channel
+- `/play <nombre de la canción>`: Reproduce la canción especificada desde YouTube.
+- `/pause`: Pausa la reproducción.
+- `/resume`: Reanuda la reproducción.
+- `/skip`: Salta a la siguiente canción en la cola.
+- `/queue`: Muestra la cola actual.
+- `/nowplaying`: Muestra la canción actual.
+- `/leave`: Abandona el canal de voz.
 - ETC
 
 ## Instalación y Configuración
