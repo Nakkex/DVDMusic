@@ -39,7 +39,7 @@ Inicia el bot ejecutando node index.js en el directorio raíz de este proyecto.
 ## Contribuciones
 
 ¡Las contribuciones son siempre bienvenidas! Si encuentras un error o quieres agregar una nueva función, por favor crea un issue o envía una pull request.
-Basado en https://github.com/Nakkex/DVD
+Basado en [https://github.com/Nakkex/DVD](https://github.com/SudhanPlayz/Discord-MusicBot)
 
 ## Licencia
 
