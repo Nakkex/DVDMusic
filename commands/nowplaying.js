@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const prettyMilliseconds = require("pretty-ms");
 
 module.exports = {
-  name: "nowplaying",
+  name: "ahora",
   description: "Ver qué canción se está reproduciendo actualmente",
   usage: "",
   permissions: {
