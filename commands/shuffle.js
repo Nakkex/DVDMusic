@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-  name: "barajar",
-  description: "Baraja la cola de reproducción",
+  name: "random",
+  description: "Mezcla la cola de reproducción",
   usage: "",
   permissions: {
     channel: ["VER_CANAL", "ENVIAR_MENSAJES", "EMBED_LINKS"],
@@ -39,10 +39,10 @@ module.exports = {
     if (!player.queue || !player.queue.length || player.queue.length === 0)
       return client.sendTime(
         message.channel,
-        "❌ | **¡No hay suficientes canciones en la cola para barajar!**"
+        "❌ | **¡No hay suficientes canciones en la cola para mezclar!**"
       );
     player.queue.shuffle();
-    await client.sendTime(message.channel, "✅ | ¡Cola barajada!");
+    await client.sendTime(message.channel, "✅ | ¡Cola mezclada!");
   },
   SlashCommand: {
     /**
@@ -79,10 +79,10 @@ module.exports = {
       if (!player.queue || !player.queue.length || player.queue.length === 0)
         return client.sendTime(
           interaction,
-          "❌ | **¡No hay suficientes canciones en la cola para barajar!**"
+          "❌ | **¡No hay suficientes canciones en la cola para mezclar!**"
         );
       player.queue.shuffle();
-      client.sendTime(interaction, "✅ | ¡Cola barajada!");
+      client.sendTime(interaction, "✅ | ¡Cola mezclada!");
     },
   },
 };
