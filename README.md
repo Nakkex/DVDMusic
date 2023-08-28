@@ -2,8 +2,6 @@
 
 Este es un bot de música para Discord que permite a los usuarios reproducir música en un canal de voz utilizando comandos.
 
-[![Demo Video](https://cdn.discordapp.com/attachments/1097783484614987817/1101452133099900948/Thumnail.png)](addingsooner)
-
 ## Funciones
 
 - Reproduce música desde YouTube, Spotify y TODAS las fuentes. 
