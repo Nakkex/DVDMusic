@@ -2,7 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const { TrackUtils } = require("erela.js");
 
 module.exports = {
-  name: "loopqueue",
+  name: "loopcola",
   description: "Repetir toda la cola de reproducción",
   usage: "",
   permissions: {
