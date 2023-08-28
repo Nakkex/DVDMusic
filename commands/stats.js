@@ -4,7 +4,7 @@ const cpuStat = require("cpu-stat");
 const moment = require("moment");
 
 module.exports = {
-  name: "estadisticas",
+  name: "stats",
   description: "Obtener información sobre el bot",
   usage: "",
   permissions: {
