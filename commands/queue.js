@@ -4,8 +4,8 @@ const prettyMilliseconds = require("pretty-ms");
 let d;
 
 module.exports = {
-  name: "queue",
-  description: "Muestra todas las canciones encoladas actualmente",
+  name: "cola",
+  description: "Muestra todas las canciones en cola actualmente",
   usage: "",
   permissions: {
     channel: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
