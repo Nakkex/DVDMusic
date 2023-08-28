@@ -6,13 +6,13 @@ module.exports = {
   SupportServer: "https://discord.io/sciencegear", // Support Server Link
   Token: process.env.Token || "", // Discord Bot Token
   ClientID: process.env.Discord_ClientID || "", 
-  ClientSecret: process.env.Discord_ClientSecret || "X12g9l9d5TuTbQVJ6Db4yJ6UBh-CQ_Hp", 
+  ClientSecret: process.env.Discord_ClientSecret || "", 
   Scopes: ["identify", "guilds", "applications.commands"],
   ServerDeafen: true, 
   DefaultVolume: 100,
   CallbackURL: "/api/callback", 
   "24/7": false,
-  CookieSecret: "Coscu es GOD",
+  CookieSecret: "INSERT COOKIE SECRET",
   IconURL:
     "https://media.tenor.com/sce9SDRey4EAAAAi/disc.gif",
   EmbedColor: "RANDOM", 
@@ -27,9 +27,9 @@ module.exports = {
 
   Lavalink: {
     id: "Main",
-    host: "ssl.horizxon.studio", 
+    host: "", 
     port: 443, 
-    pass: "horizxon.studio", 
+    pass: "", 
     secure: true, 
     retryAmount: 200, 
     retryDelay: 40, 
